@@ -68,7 +68,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
           const base64String = await convertFileBase64(file);
           return {
             name: file.name,
-            photo: base64String,
+            file: base64String,
             type: file.type,
             size: file.size,
           };
@@ -155,8 +155,8 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
       <div
         className={`${
           dragging
-            ? "border border-[#2B92EC] bg-[#EDF2FF]"
-            : "border-dashed border-[#e0e0e0]"
+            ? "border border-primary bg-slate-100"
+            : "border-dashed border-slate-300"
         } flex items-center justify-center mx-auto text-center border-2 rounded-md mt-4 py-5`}
         ref={dropContainer}
       >
@@ -174,7 +174,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
               onChange={(e) => handleDrop(e, "inputFile")}
             />
             <span
-              className="text-[#55B4C8] cursor-pointer"
+              className="text-primary cursor-pointer"
               onClick={() => {
                 fileRef.current.click();
               }}
@@ -192,10 +192,13 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
       {data.length > 0 && (
         <div className="mt-4 flex">
           {data.map((file, index) => (
-            <div className="w-full px-3 py-3.5 rounded-md bg-slate-200 space-y-3">
+            <div
+              key={index}
+              className="w-full px-3 py-3.5 rounded-md bg-slate-200 space-y-3"
+            >
               <div className="flex justify-between">
                 <div className="w-[70%] flex justify-start items-center space-x-2">
-                  <div className="text-[#55B4C8] text-[37px]">
+                  <div className="text-primary text-[37px]">
                     <FaRegFile />
                   </div>
                   <div className=" space-y-1">
