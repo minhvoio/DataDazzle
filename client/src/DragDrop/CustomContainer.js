@@ -8,6 +8,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
   const dropContainer = useRef(null);
   const [dragging, setDragging] = useState(false);
   const fileRef = useRef(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   async function handleDrop(e, type) {
     let files;
@@ -25,12 +26,6 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
     });
 
     if (data.length >= count) {
-      // showAlert(
-      //   "warning",
-      //   "Maximum Files",
-      //   `Only ${count} files can be uploaded`
-      // );
-      // return;
       data.pop();
     }
     if (!allFilesValid) {
@@ -52,6 +47,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
 
     if (files && files.length) {
       // Remove any existing file from the data array
+
       if (data.length > 0) {
         onDelete(0);
       }
@@ -59,6 +55,8 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
       const nFiles = files.map(async (file) => {
         const formData = new FormData();
         formData.append("file", file);
+        let progressInterval;
+
         try {
           const response = await axios.post(
             "http://127.0.0.1:8000/api/upload/",
@@ -67,11 +65,34 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
               headers: {
                 "Content-Type": "multipart/form-data",
               },
+              onUploadProgress: (progressEvent) => {
+                const progress = Math.min(
+                  50,
+                  Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                );
+                setUploadProgress(progress);
+
+                // Start the progress interval when the initial progress reaches 50
+                if (progress === 50 && !progressInterval) {
+                  progressInterval = setInterval(() => {
+                    setUploadProgress((prevProgress) => {
+                      const newProgress = prevProgress + 2;
+                      if (newProgress >= 98) {
+                        return 98;
+                      }
+                      return newProgress;
+                    });
+                  }, 1500);
+                }
+              },
             }
           );
 
           console.log("File uploaded successfully:", response.data);
+
           const base64String = await convertFileBase64(file);
+          setUploadProgress(100);
+          clearInterval(progressInterval);
           return {
             name: file.name,
             file: base64String,
@@ -194,6 +215,19 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
           </div>
         </div>
       </div>
+      {uploadProgress > 0 && uploadProgress !== 100 && (
+        <div className="mt-4">
+          <div className="bg-gray-200 h-2 rounded-full overflow-hidden">
+            <div
+              className="bg-primary h-full transition-all duration-500"
+              style={{ width: `${uploadProgress}%` }}
+            />
+          </div>
+          <p className="mt-1 text-sm text-gray-500">
+            Uploading file... {uploadProgress}%
+          </p>
+        </div>
+      )}
 
       {data.length > 0 && (
         <div className="mt-4 flex">
