@@ -1,20 +1,15 @@
 import { useRef, useEffect, useState } from "react";
-import { FaUpload, FaRegFileImage, FaRegFile } from "react-icons/fa";
+import { FaUpload, FaRegFile } from "react-icons/fa";
 import { BsX } from "react-icons/bs";
 import Swal from "sweetalert2";
+import axios from "axios";
 
-export function CustomDragDrop({
-  ownerLicense,
-  onUpload,
-  onDelete,
-  count,
-  formats,
-}) {
+export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
   const dropContainer = useRef(null);
   const [dragging, setDragging] = useState(false);
   const fileRef = useRef(null);
 
-  function handleDrop(e, type) {
+  async function handleDrop(e, type) {
     let files;
     if (type === "inputFile") {
       files = [...e.target.files];
@@ -29,7 +24,7 @@ export function CustomDragDrop({
       return formats.some((format) => file.type.includes(format));
     });
 
-    if (ownerLicense.length >= count) {
+    if (data.length >= count) {
       showAlert(
         "warning",
         "Maximum Files",
@@ -42,9 +37,6 @@ export function CustomDragDrop({
         "warning",
         "Invalid Media",
         "Invalid file format. Please only upload XLSX, XLS, CSV files"
-        // `Invalid file format. Please only upload ${formats
-        //   .join(", ")
-        //   .toUpperCase()}`
       );
       return;
     }
@@ -59,13 +51,30 @@ export function CustomDragDrop({
 
     if (files && files.length) {
       const nFiles = files.map(async (file) => {
-        const base64String = await convertFileBase64(file);
-        return {
-          name: file.name,
-          photo: base64String,
-          type: file.type,
-          size: file.size,
-        };
+        const formData = new FormData();
+        formData.append("file", file);
+        try {
+          const response = await axios.post(
+            "http://127.0.0.1:8000/api/upload/",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+
+          console.log("File uploaded successfully:", response.data);
+          const base64String = await convertFileBase64(file);
+          return {
+            name: file.name,
+            photo: base64String,
+            type: file.type,
+            size: file.size,
+          };
+        } catch (error) {
+          console.error("Error uploading file:", error);
+        }
       });
 
       Promise.all(nFiles).then((newFiles) => {
@@ -110,10 +119,12 @@ export function CustomDragDrop({
       if (dropContainer.current) {
         dropContainer.current.removeEventListener("dragover", handleDragOver);
         dropContainer.current.removeEventListener("drop", handleDrop);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         dropContainer.current.removeEventListener("dragleave", handleDragLeave);
       }
     };
-  }, [ownerLicense]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   const TopNotification = Swal.mixin({
     toast: true,
@@ -137,15 +148,6 @@ export function CustomDragDrop({
       timer: 2000,
     });
   }
-
-  // function showImage(image) {
-  //   Swal.fire({
-  //     imageUrl: image,
-  //     showCloseButton: true,
-  //     showConfirmButton: false,
-  //     width: 450,
-  //   });
-  // }
 
   return (
     <>
@@ -172,7 +174,7 @@ export function CustomDragDrop({
               onChange={(e) => handleDrop(e, "inputFile")}
             />
             <span
-              className="text-[#4070f4] cursor-pointer"
+              className="text-[#55B4C8] cursor-pointer"
               onClick={() => {
                 fileRef.current.click();
               }}
@@ -187,28 +189,21 @@ export function CustomDragDrop({
         </div>
       </div>
 
-      {ownerLicense.length > 0 && (
-        <div className="mt-4 grid grid-cols-2 gap-y-4 gap-x-4">
-          {ownerLicense.map((img, index) => (
+      {data.length > 0 && (
+        <div className="mt-4 flex">
+          {data.map((file, index) => (
             <div className="w-full px-3 py-3.5 rounded-md bg-slate-200 space-y-3">
               <div className="flex justify-between">
                 <div className="w-[70%] flex justify-start items-center space-x-2">
-                  <div
-                    className="text-[#5E62FF] text-[37px]"
-                    // onClick={() => showImage(img.photo)}
-                  >
-                    {img.type.match(/image.*/i) ? (
-                      <FaRegFileImage />
-                    ) : (
-                      <FaRegFile />
-                    )}
+                  <div className="text-[#55B4C8] text-[37px]">
+                    <FaRegFile />
                   </div>
                   <div className=" space-y-1">
                     <div className="text-xs font-medium text-gray-500">
-                      {img.name}
+                      {file.name}
                     </div>
                     <div className="text-[10px] font-medium text-gray-400">{`${Math.floor(
-                      img.size / 1024
+                      file.size / 1024
                     )} KB`}</div>
                   </div>
                 </div>
