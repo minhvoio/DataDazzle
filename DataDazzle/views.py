@@ -8,7 +8,6 @@ from .serializers import FileUploadSerializers
 from django.core.files.storage import FileSystemStorage
 from .utils.convert_data_types import infer_and_convert_data_types
 
-
 class FileUploadView(APIView):
   def post(self, request, *args, **kwargs):
     serializer = FileUploadSerializers(data = request.data)

@@ -25,12 +25,13 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
     });
 
     if (data.length >= count) {
-      showAlert(
-        "warning",
-        "Maximum Files",
-        `Only ${count} files can be uploaded`
-      );
-      return;
+      // showAlert(
+      //   "warning",
+      //   "Maximum Files",
+      //   `Only ${count} files can be uploaded`
+      // );
+      // return;
+      data.pop();
     }
     if (!allFilesValid) {
       showAlert(
@@ -50,6 +51,11 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
     }
 
     if (files && files.length) {
+      // Remove any existing file from the data array
+      if (data.length > 0) {
+        onDelete(0);
+      }
+
       const nFiles = files.map(async (file) => {
         const formData = new FormData();
         formData.append("file", file);
