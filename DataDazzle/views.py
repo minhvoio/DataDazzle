@@ -1,32 +1,13 @@
 import os
+import pandas as pd
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import FileUploadSerializers
 from django.core.files.storage import FileSystemStorage
+from .utils.convert_data_types import infer_and_convert_data_types
 
-import pandas as pd
-
-def infer_and_convert_data_types(df):
-    for col in df.columns:
-        # Attempt to convert to numeric first
-        df_converted = pd.to_numeric(df[col], errors='coerce')
-        if not df_converted.isna().all():  # If at least one value is numeric
-            df[col] = df_converted
-            continue
-
-        # Attempt to convert to datetime
-        try:
-            df[col] = pd.to_datetime(df[col])
-            continue
-        except (ValueError, TypeError):
-            pass
-
-        # Check if the column should be categorical
-        if len(df[col].unique()) / len(df[col]) < 0.5:  # Example threshold for categorization
-            df[col] = pd.Categorical(df[col])
-
-    return df
 
 class FileUploadView(APIView):
   def post(self, request, *args, **kwargs):
@@ -51,7 +32,16 @@ class FileUploadView(APIView):
       else:
           return Response({'error': 'Invalid file format'}, status=status.HTTP_400_BAD_REQUEST)
       
-      print(df)
+      # print(df)    
+      print("Data types before inference:")
+      print(df.dtypes)    
+
+      df = infer_and_convert_data_types(df)
+
+      print("\nData types after inference:")
+      print(df.dtypes)
+
+      os.remove(temp_file_path)
 
       return Response({'message': 'File uploaded successfully'}, status = status.HTTP_200_OK)
     else:
