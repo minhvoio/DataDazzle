@@ -7,7 +7,6 @@ from DataDazzle.serializers import UploadedFileSerializer
 from django.core.files.storage import FileSystemStorage
 from .utils.handle_data import infer_and_convert_data_types
 from .models import UploadedFile, ProcessedData
-from rest_framework.permissions import IsAuthenticated
 
 class FileUploadView(APIView):
     def post(self, request, *args, **kwargs):
@@ -36,7 +35,7 @@ class FileUploadView(APIView):
             )
 
         print("\nData types after inference:")
-        # print(df)
+        print(df)
         print(df.dtypes)
 
         # Remove the temporary file
