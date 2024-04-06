@@ -14,9 +14,9 @@ def infer_and_convert_data_types(file_path):
     if file_path.endswith('.csv'):
         df = pd.read_csv(file_path, low_memory=False)
     elif file_path.endswith('.xlsx'):
-        df = pd.read_excel(file_path, low_memory=False)
+        df = pd.read_excel(file_path)
     elif file_path.endswith('.xls'):
-        df = pd.read_excel(file_path, engine='xlrd', low_memory=False)
+        df = pd.read_excel(file_path, engine='xlrd')
     else:
         raise ValueError("Unsupported file format. Please provide a CSV or Excel file.")
     
