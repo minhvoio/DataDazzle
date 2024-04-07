@@ -149,9 +149,9 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
     <>
       <div className="bg-slate-100 h-screen py-16 overflow-auto">
         <div className="flex justify-center items-center px-5">
-          <div className="bg-white shadow-lg rounded-lg w-2/5 px-5 py-5">
-            <div className="pb-[8px] border-b border-[#e0e0e0] flex justify-center">
-              <img src={logo} alt="logo" className="h-8" />
+          <div className="bg-white shadow-lg rounded-lg w-2/3 px-5 py-5">
+            <div className="pb-4 border-b border-[#e0e0e0] flex justify-center">
+              <img src={logo} alt="logo" className="h-10" />
             </div>
             {/* Container Drop */}
             <div
@@ -195,23 +195,28 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
             )}
 
             {data.length > 0 && (
-              <div className="mt-4 flex-col space-y-3">
-                {data.map((file, index) => (
-                  <FileDisplay file={file} index={index} onDelete={onDelete} />
-                ))}
-              </div>
+              <>
+                <div className="mt-4 flex-col space-y-3">
+                  {data.map((file, index) => (
+                    <FileDisplay
+                      file={file}
+                      index={index}
+                      onDelete={onDelete}
+                    />
+                  ))}
+                </div>
+                <div className="mt-5">
+                  {processedData && (
+                    <DataTable
+                      processedData={processedData}
+                      dataTypes={dataTypes}
+                    />
+                  )}
+                </div>
+              </>
             )}
           </div>
         </div>
-
-        {/* Display the processed data in a table */}
-        {data.length > 0 && (
-          <div className="bg-white shadow-lg rounded-lg px-5 py-5 mt-16 w-2/3 mx-auto">
-            {processedData && (
-              <DataTable processedData={processedData} dataTypes={dataTypes} />
-            )}
-          </div>
-        )}
       </div>
     </>
   );
