@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from DataDazzle.serializers import UploadedFileSerializer
 from django.core.files.storage import FileSystemStorage
-from .utils.handle_data import infer_and_convert_data_types
+from .utils.handle_data import infer_and_convert_data_types, convert_to_user_friendly_type
 from .models import UploadedFile, ProcessedData
 from .utils.dtypes_map import data_type_mapping
 
@@ -27,22 +27,19 @@ class FileUploadView(APIView):
             file_path=temp_file_path
         )
 
+        user_friendly_data_types = convert_to_user_friendly_type(df)
+
         # Create instances of the ProcessedData model for each column
         for column_name, data_type in df.dtypes.items():
             ProcessedData.objects.create(
                 file=uploaded_file,
                 column_name=column_name,
-                data_type=str(data_type)
+                data_type=user_friendly_data_types.get(column_name)
             )
 
-        user_friendly_data_types = {}
-        for column_name, data_type in df.dtypes.items():
-            user_friendly_type = data_type_mapping.get(str(data_type), str(data_type))
-            user_friendly_data_types[column_name] = user_friendly_type
-
         print("\nData types after inference:")
-        # print(df)
-        print(df.dtypes)
+        print(df)
+        # print(df.dtypes)
         print(user_friendly_data_types)
 
         # Remove the temporary file
