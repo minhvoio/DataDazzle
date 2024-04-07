@@ -7,7 +7,6 @@ import { UploadBar } from "./UploadBar";
 import { FileDisplay } from "./FileDisplay";
 import { showAlert } from "../utils/showAlert";
 import { TopNotification } from "./TopNotification";
-import { convertFileBase64 } from "../utils/convertFileBase64";
 
 export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
   const dropContainer = useRef(null);
@@ -96,14 +95,10 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
 
           console.log("File uploaded successfully:", response.data);
           setOutput(response.data);
-
-          const base64String = await convertFileBase64(file);
           setUploadProgress(100);
           clearInterval(progressInterval);
           return {
             name: file.name,
-            file: base64String,
-            type: file.type,
             size: file.size,
           };
         } catch (error) {
