@@ -2,6 +2,18 @@ import pandas as pd
 from .dtypes_map import data_type_mapping
 
 def read_file(file_path):
+    """
+    Read a file into a Pandas DataFrame.
+    
+    Args:
+        file_path (str): The path to the file. Supported formats are .xlsx, .xls, and .csv.
+        
+    Returns:
+        pandas.DataFrame: The DataFrame containing the data from the file.
+        
+    Raises:
+        ValueError: If the file format is not supported.
+    """
     # Load the data into a Pandas DataFrame
     if file_path.endswith('.xlsx'):
         df = pd.read_excel(file_path)
@@ -46,6 +58,15 @@ def infer_and_convert_data_types(file_path):
     return df
 
 def convert_to_user_friendly_type(df):
+    """
+    Convert the data types of a DataFrame to user-friendly types.
+    
+    Args:
+        df (pandas.DataFrame): The DataFrame whose data types are to be converted.
+        
+    Returns:
+        dict: A dictionary mapping column names to their user-friendly data types.
+    """
     user_friendly_data_types = {}
     for column_name, data_type in df.dtypes.items():
         user_friendly_type = data_type_mapping.get(str(data_type), str(data_type))
