@@ -95,7 +95,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
             }
           );
 
-          console.log("File uploaded successfully:", response.data);
+          // console.log("File uploaded successfully:", response.data);
           setDataTypes(response.data.data_types);
           setProcessedData(response.data.processed_data);
           setUploadProgress(100);

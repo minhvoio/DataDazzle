@@ -45,8 +45,7 @@ class FileUploadView(APIView):
         os.remove(temp_file_path)
 
         # Convert the DataFrame to a JSON-compatible format
-        df_json = json.loads(infered_dtypes_df.to_json(orient='records'))
-        print(df_json)
+        df_json = json.loads(infered_dtypes_df.to_json(orient='records'))        
 
         # Create a dictionary to hold both the DataFrame and user-friendly data types
         response_data = {
