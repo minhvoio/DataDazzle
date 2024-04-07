@@ -9,6 +9,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
   const [dragging, setDragging] = useState(false);
   const fileRef = useRef(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [output, setOutput] = useState(null);
 
   async function handleDrop(e, type) {
     let files;
@@ -89,6 +90,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
           );
 
           console.log("File uploaded successfully:", response.data);
+          setOutput(response.data);
 
           const base64String = await convertFileBase64(file);
           setUploadProgress(100);
@@ -230,7 +232,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
       )}
 
       {data.length > 0 && (
-        <div className="mt-4 flex">
+        <div className="mt-4 flex-col space-y-3">
           {data.map((file, index) => (
             <div
               key={index}
@@ -266,6 +268,27 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
               </div>
             </div>
           ))}
+          {output && (
+            <table className="table-auto w-full">
+              <thead>
+                <tr>
+                  <th className="px-4 py-2 text-start">Column</th>
+                  <th className="px-4 py-2 text-start">Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(output).map(([key, value], index) => (
+                  <tr
+                    key={index}
+                    className={index % 2 === 0 ? "bg-slate-200" : ""}
+                  >
+                    <td className="border px-4 py-2">{key}</td>
+                    <td className="border px-4 py-2">{value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       )}
     </>

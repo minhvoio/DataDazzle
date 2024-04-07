@@ -34,12 +34,28 @@ class FileUploadView(APIView):
                 data_type=str(data_type)
             )
 
+        data_type_mapping = {
+        'object': 'Text',
+        'int64': 'Integer',
+        'float64': 'Float',
+        'bool': 'Boolean',
+        'datetime64': 'Date',
+        'timedelta64[ns]': 'Time Delta',
+        'category': 'Category'
+    }
+
+        user_friendly_data_types = {}
+        for column_name, data_type in df.dtypes.items():
+            user_friendly_type = data_type_mapping.get(str(data_type), str(data_type))
+            user_friendly_data_types[column_name] = user_friendly_type
+
         print("\nData types after inference:")
-        print(df)
+        # print(df)
         print(df.dtypes)
+        print(user_friendly_data_types)
 
         # Remove the temporary file
         os.remove(temp_file_path)
 
         serializer = UploadedFileSerializer(uploaded_file)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(user_friendly_data_types, status=status.HTTP_200_OK)
