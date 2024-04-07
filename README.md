@@ -119,7 +119,7 @@ DataDazzle is a web application that allows users to upload CSV or Excel files, 
 
 1. Open your web browser and go to `http://localhost:3000`.
 
-2. Click on the "Upload File" button and select a CSV or Excel file to upload.
+2. Click on the "Upload File" button and select a CSV/Excel file or Drag and drop a CSV/Excel file to upload.
 
 3. The application will process the file, infer and convert the data types, and display the processed data in a table format.
 
