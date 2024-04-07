@@ -209,7 +209,10 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
                           <DataTable
                             processedData={processedData}
                             dataTypes={dataTypes}
-                            fileName={file.name}
+                            fileName={file.name
+                              .split(".")
+                              .slice(0, -1)
+                              .join(".")}
                           />
                         )}
                       </div>
