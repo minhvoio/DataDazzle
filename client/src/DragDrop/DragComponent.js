@@ -8,8 +8,8 @@ export default function DragComponent() {
     setData([...data, ...f]);
   }
 
-  function deleteFile(indexImg) {
-    const updatedList = data.filter((ele, index) => index !== indexImg);
+  function deleteFile(indexFile) {
+    const updatedList = data.filter((ele, index) => index !== indexFile);
     setData(updatedList);
   }
 

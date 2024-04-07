@@ -1,6 +1,6 @@
 import React from "react";
 
-const DataTable = ({ processedData }) => {
+const DataTable = ({ processedData, dataTypes }) => {
   // Check if processedData is undefined or not an array
   if (!processedData || !Array.isArray(processedData)) {
     return <div>No data available.</div>;
@@ -21,7 +21,7 @@ const DataTable = ({ processedData }) => {
     <div className="overflow-x-auto">
       <table className="table-auto w-full">
         <thead>
-          <tr className="bg-slate-100">
+          <tr className="bg-gray-100">
             {columns.map((column, index) => (
               <th
                 key={index}
@@ -31,12 +31,22 @@ const DataTable = ({ processedData }) => {
               </th>
             ))}
           </tr>
+          <tr className="bg-gray-200">
+            {columns.map((column, index) => (
+              <th
+                key={index}
+                className="px-4 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
+              >
+                {dataTypes[column]}
+              </th>
+            ))}
+          </tr>
         </thead>
         <tbody>
           {limitedRows.map((row, rowIndex) => (
             <tr
               key={rowIndex}
-              className={rowIndex % 2 === 0 ? "bg-white" : "bg-slate-50"}
+              className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50"}
             >
               {columns.map((column, cellIndex) => (
                 <td

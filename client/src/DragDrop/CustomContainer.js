@@ -2,7 +2,6 @@ import axios from "axios";
 
 import { useRef, useEffect, useState } from "react";
 import { FaUpload } from "react-icons/fa";
-import { OutputTable } from "./OutputTable";
 import { ProgressBar } from "./ProgressBar";
 import { FileDisplay } from "./FileDisplay";
 import { showAlert } from "../utils/showAlert";
@@ -15,7 +14,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
   const [dragging, setDragging] = useState(false);
   const fileRef = useRef(null);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [output, setOutput] = useState(null);
+  const [dataTypes, setDataTypes] = useState(null);
   const [processedData, setProcessedData] = useState(null);
 
   async function handleDrop(e, type) {
@@ -97,7 +96,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
           );
 
           console.log("File uploaded successfully:", response.data);
-          setOutput(response.data.data_types);
+          setDataTypes(response.data.data_types);
           setProcessedData(response.data.processed_data);
           setUploadProgress(100);
           clearInterval(progressInterval);
@@ -200,15 +199,19 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
                 {data.map((file, index) => (
                   <FileDisplay file={file} index={index} onDelete={onDelete} />
                 ))}
-                {/* {output && <OutputTable output={output} />} */}
               </div>
             )}
           </div>
         </div>
 
-        <div className="bg-white shadow-lg rounded-lg px-5 py-5 mt-16 w-2/3 mx-auto">
-          {processedData && <DataTable processedData={processedData} />}
-        </div>
+        {/* Display the processed data in a table */}
+        {data.length > 0 && (
+          <div className="bg-white shadow-lg rounded-lg px-5 py-5 mt-16 w-2/3 mx-auto">
+            {processedData && (
+              <DataTable processedData={processedData} dataTypes={dataTypes} />
+            )}
+          </div>
+        )}
       </div>
     </>
   );
