@@ -16,6 +16,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [dataTypes, setDataTypes] = useState(null);
   const [processedData, setProcessedData] = useState(null);
+  const [note, setNote] = useState(null);
 
   async function handleDrop(e, type) {
     let files;
@@ -54,14 +55,19 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
 
     if (files && files.length) {
       // Remove any existing file from the data array
-
       if (data.length > 0) {
         onDelete(0);
       }
 
       const nFiles = files.map(async (file) => {
+        if (file.name.includes("(cleaned_by_DataDazzle)")) {
+          setNote("This file has already been cleaned by DataDazzle.");
+          return { name: file.name, size: file.size };
+        }
+
         const formData = new FormData();
         formData.append("file", file);
+
         let progressInterval;
 
         try {
@@ -204,6 +210,9 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
                         index={index}
                         onDelete={onDelete}
                       />
+                      {note && (
+                        <div className="text-sm text-gray-500">{note}</div>
+                      )}
                       <div className="mt-5">
                         {processedData && (
                           <DataTable

@@ -91,7 +91,7 @@ const DataTable = ({ processedData, dataTypes, fileName }) => {
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", fileName + ".csv");
+    link.setAttribute("download", fileName + "(cleaned_by_DataDazzle).csv");
 
     topNotification.fire({
       icon: "success",
