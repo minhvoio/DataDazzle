@@ -147,7 +147,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
 
   return (
     <>
-      <div className="bg-slate-100 h-screen py-16 overflow-auto">
+      <div className="bg-slate-50 h-screen py-16 overflow-auto">
         <div className="flex justify-center items-center px-5">
           <div className="bg-white shadow-lg rounded-lg w-2/3 px-5 py-5">
             <div className="pb-4 border-b border-[#e0e0e0] flex justify-center">
