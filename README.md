@@ -2,6 +2,8 @@
 
 DataDazzle is a web application that allows users to upload CSV or Excel files, infer and convert data types, and display the processed data in a user-friendly table format. The application is built using Django REST Framework for the backend and React for the frontend.
 
+DEMO: https://drive.google.com/file/d/17i47CEx6_c499ZrPcySs1RhLljKRDPu7/view?usp=sharing
+
 ## Features
 
 - Upload CSV or Excel files (.xlsx, .xls, or .csv)
