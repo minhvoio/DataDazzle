@@ -1,4 +1,4 @@
-export function UploadBar({ uploadProgress }) {
+export function ProgressBar({ uploadProgress }) {
   return (
     <div className="mt-4">
       <div className="bg-gray-200 h-2 rounded-full overflow-hidden">

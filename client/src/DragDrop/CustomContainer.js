@@ -3,7 +3,7 @@ import axios from "axios";
 import { useRef, useEffect, useState } from "react";
 import { FaUpload } from "react-icons/fa";
 import { OutputTable } from "./OutputTable";
-import { UploadBar } from "./UploadBar";
+import { ProgressBar } from "./ProgressBar";
 import { FileDisplay } from "./FileDisplay";
 import { showAlert } from "../utils/showAlert";
 import { TopNotification } from "./TopNotification";
@@ -182,7 +182,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
         </div>
       </div>
       {uploadProgress > 0 && uploadProgress !== 100 && (
-        <UploadBar uploadProgress={uploadProgress} />
+        <ProgressBar uploadProgress={uploadProgress} />
       )}
 
       {data.length > 0 && (
