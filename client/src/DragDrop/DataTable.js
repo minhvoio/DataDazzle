@@ -115,7 +115,7 @@ const DataTable = ({ processedData, dataTypes, fileName }) => {
           Copy Header and Types
         </button>
         <button
-          className="flex items-center px-4 py-2 ml-4 mb-4 font-bold text-white bg-green-500 rounded hover:bg-green-700"
+          className="flex items-center px-4 py-2 ml-4 mb-4 font-bold text-white bg-secondary rounded hover:bg-secondary_dark"
           onClick={handleDownloadCSV}
         >
           <FaDownload className="mr-2" />
