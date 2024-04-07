@@ -1,8 +1,13 @@
-import { useRef, useEffect, useState } from "react";
-import { FaUpload, FaRegFile } from "react-icons/fa";
-import { BsX } from "react-icons/bs";
-import Swal from "sweetalert2";
 import axios from "axios";
+
+import { useRef, useEffect, useState } from "react";
+import { FaUpload } from "react-icons/fa";
+import { OutputTable } from "./OutputTable";
+import { UploadBar } from "./UploadBar";
+import { FileDisplay } from "./FileDisplay";
+import { showAlert } from "../utils/showAlert";
+import { TopNotification } from "./TopNotification";
+import { convertFileBase64 } from "../utils/convertFileBase64";
 
 export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
   const dropContainer = useRef(null);
@@ -116,19 +121,6 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
     }
   }
 
-  async function convertFileBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        resolve(reader.result);
-      };
-      reader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  }
-
   useEffect(() => {
     function handleDragOver(e) {
       e.preventDefault();
@@ -154,29 +146,6 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
-
-  const TopNotification = Swal.mixin({
-    toast: true,
-    position: "bottom-end",
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener("mouseenter", Swal.stopTimer);
-      toast.addEventListener("mouseleave", Swal.resumeTimer);
-    },
-  });
-
-  function showAlert(icon, title, text) {
-    Swal.fire({
-      icon: icon,
-      title: title,
-      text: text,
-      showConfirmButton: false,
-      width: 500,
-      timer: 2000,
-    });
-  }
 
   return (
     <>
@@ -218,77 +187,15 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
         </div>
       </div>
       {uploadProgress > 0 && uploadProgress !== 100 && (
-        <div className="mt-4">
-          <div className="bg-gray-200 h-2 rounded-full overflow-hidden">
-            <div
-              className="bg-primary h-full transition-all duration-500"
-              style={{ width: `${uploadProgress}%` }}
-            />
-          </div>
-          <p className="mt-1 text-sm text-gray-500">
-            Uploading file... {uploadProgress}%
-          </p>
-        </div>
+        <UploadBar uploadProgress={uploadProgress} />
       )}
 
       {data.length > 0 && (
         <div className="mt-4 flex-col space-y-3">
           {data.map((file, index) => (
-            <div
-              key={index}
-              className="w-full px-3 py-3.5 rounded-md bg-slate-200 space-y-3"
-            >
-              <div className="flex justify-between">
-                <div className="w-[70%] flex justify-start items-center space-x-2">
-                  <div className="text-primary text-[37px]">
-                    <FaRegFile />
-                  </div>
-                  <div className=" space-y-1">
-                    <div className="text-xs font-medium text-gray-500">
-                      {file.name}
-                    </div>
-                    <div className="text-[10px] font-medium text-gray-400">{`${Math.floor(
-                      file.size / 1024
-                    )} KB`}</div>
-                  </div>
-                </div>
-                <div className="flex-1 flex justify-end">
-                  <div className="space-y-1">
-                    <div
-                      className="text-gray-500 text-[17px] cursor-pointer"
-                      onClick={() => onDelete(index)}
-                    >
-                      <BsX className="ml-auto" />
-                    </div>
-                    <div className="text-[10px] font-medium text-gray-400">
-                      Done
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <FileDisplay file={file} index={index} onDelete={onDelete} />
           ))}
-          {output && (
-            <table className="table-auto w-full">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2 text-start">Column</th>
-                  <th className="px-4 py-2 text-start">Type</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(output).map(([key, value], index) => (
-                  <tr
-                    key={index}
-                    className={index % 2 === 0 ? "bg-slate-200" : ""}
-                  >
-                    <td className="border px-4 py-2">{key}</td>
-                    <td className="border px-4 py-2">{value}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          {output && <OutputTable output={output} />}
         </div>
       )}
     </>
