@@ -10,6 +10,8 @@ DataDazzle is a web application that allows users to upload CSV or Excel files, 
 - Allow users to override the inferred data types
 - Display dates in a human-readable format
 - Limit the displayed rows to the first 20 for better performance
+- Copy the header and data types to the clipboard with a single click
+- Download the entire table as a CSV file with data types in the first row and header in the second row
 
 ## Technologies Used
 
