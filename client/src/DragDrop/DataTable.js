@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import moment from "moment";
 
 const DataTable = ({ processedData, dataTypes }) => {
   // State to store the selected data types
@@ -77,14 +78,26 @@ const DataTable = ({ processedData, dataTypes }) => {
               key={rowIndex}
               className={rowIndex % 2 === 0 ? "bg-white" : "bg-slate-100"}
             >
-              {columns.map((column, cellIndex) => (
-                <td
-                  key={cellIndex}
-                  className="px-4 py-2 whitespace-nowrap text-sm text-gray-900"
-                >
-                  {row[column]}
-                </td>
-              ))}
+              {columns.map((column, cellIndex) => {
+                const cellValue = row[column];
+                let formattedValue = cellValue;
+
+                // Check if the column is date-related based on the data type
+                if (selectedDataTypes[column] === "Date") {
+                  formattedValue = moment(cellValue).isValid()
+                    ? moment(cellValue).format("YYYY-MM-DD")
+                    : cellValue;
+                }
+
+                return (
+                  <td
+                    key={cellIndex}
+                    className="px-4 py-2 whitespace-nowrap text-sm text-gray-900"
+                  >
+                    {formattedValue}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

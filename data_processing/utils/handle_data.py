@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 from .dtypes_map import data_type_mapping
 
 def read_file(file_path):
@@ -26,7 +28,7 @@ def read_file(file_path):
     
     return df
 
-def infer_and_convert_data_types(file_path):
+def infer_and_convert_data_types(df):
     """
     Infer and convert data types in a CSV or Excel file.
     
@@ -35,8 +37,7 @@ def infer_and_convert_data_types(file_path):
         
     Returns:
         pandas.DataFrame: The DataFrame with the converted data types.
-    """
-    df = read_file(file_path)
+    """    
     # Infer data types
     df = df.infer_objects()
 
@@ -73,3 +74,35 @@ def convert_to_user_friendly_type(df):
         user_friendly_data_types[column_name] = user_friendly_type
 
     return user_friendly_data_types
+
+
+def clean_and_standardize_data(df):
+    # Drop rows with missing values
+    df.dropna(inplace=True)
+    
+    # Remove leading/trailing whitespace from string columns
+    string_columns = df.select_dtypes(include=['object']).columns
+    df[string_columns] = df[string_columns].apply(lambda x: x.str.strip())
+    
+    # Convert datetime columns to datetime type
+    datetime_columns = df.select_dtypes(include=['datetime']).columns
+    df[datetime_columns] = df[datetime_columns].apply(pd.to_datetime)
+    
+    # Standardize numeric columns using Z-score normalization
+    numeric_columns = df.select_dtypes(include=['float', 'int']).columns
+    scaler = StandardScaler()
+    df[numeric_columns] = scaler.fit_transform(df[numeric_columns])
+    
+    # Encode categorical columns using label encoding
+    categorical_columns = df.select_dtypes(include=['category']).columns
+    label_encoder = LabelEncoder()
+    for column in categorical_columns:
+        df[column] = label_encoder.fit_transform(df[column])
+    
+    # Handle duplicate rows
+    df.drop_duplicates(inplace=True)
+    
+    # Reset the index if needed
+    df.reset_index(drop=True, inplace=True)
+    
+    return df
