@@ -7,6 +7,7 @@ from DataDazzle.serializers import UploadedFileSerializer
 from django.core.files.storage import FileSystemStorage
 from .utils.handle_data import infer_and_convert_data_types
 from .models import UploadedFile, ProcessedData
+from .utils.dtypes_map import data_type_mapping
 
 class FileUploadView(APIView):
     def post(self, request, *args, **kwargs):
@@ -33,16 +34,6 @@ class FileUploadView(APIView):
                 column_name=column_name,
                 data_type=str(data_type)
             )
-
-        data_type_mapping = {
-        'object': 'Text',
-        'int64': 'Integer',
-        'float64': 'Float',
-        'bool': 'Boolean',
-        'datetime64': 'Date',
-        'timedelta64[ns]': 'Time Delta',
-        'category': 'Category'
-    }
 
         user_friendly_data_types = {}
         for column_name, data_type in df.dtypes.items():

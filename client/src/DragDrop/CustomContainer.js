@@ -203,7 +203,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
               onChange={(e) => handleDrop(e, "inputFile")}
             />
             <span
-              className="text-primary cursor-pointer"
+              className="text-primary cursor-pointer font-bold"
               onClick={() => {
                 fileRef.current.click();
               }}
