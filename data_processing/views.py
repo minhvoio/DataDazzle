@@ -1,13 +1,12 @@
 import os
-import pandas as pd
+import json
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from DataDazzle.serializers import UploadedFileSerializer
-from django.core.files.storage import FileSystemStorage
-from .utils.handle_data import infer_and_convert_data_types, convert_to_user_friendly_type
 from .models import UploadedFile, ProcessedData
-from .utils.dtypes_map import data_type_mapping
+from django.core.files.storage import FileSystemStorage
+from DataDazzle.serializers import UploadedFileSerializer
+from .utils.handle_data import infer_and_convert_data_types, convert_to_user_friendly_type
 
 class FileUploadView(APIView):
     def post(self, request, *args, **kwargs):
@@ -36,14 +35,23 @@ class FileUploadView(APIView):
                 column_name=column_name,
                 data_type=user_friendly_data_types.get(column_name)
             )
+        
+        # Remove the temporary file
+        os.remove(temp_file_path)
 
         print("\nData types after inference:")
         print(df)
         # print(df.dtypes)
         print(user_friendly_data_types)
 
-        # Remove the temporary file
-        os.remove(temp_file_path)
+        # Convert the DataFrame to a JSON-compatible format
+        df_json = json.loads(df.to_json(orient='records'))
 
-        serializer = UploadedFileSerializer(uploaded_file)
-        return Response(user_friendly_data_types, status=status.HTTP_200_OK)
+        # Create a dictionary to hold both the DataFrame and user-friendly data types
+        response_data = {
+            'processed_data': df_json,
+            'data_types': user_friendly_data_types
+        }
+
+        # serializer = UploadedFileSerializer(uploaded_file)
+        return Response(response_data, status=status.HTTP_200_OK)

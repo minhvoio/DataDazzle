@@ -7,6 +7,7 @@ import { ProgressBar } from "./ProgressBar";
 import { FileDisplay } from "./FileDisplay";
 import { showAlert } from "../utils/showAlert";
 import { TopNotification } from "./TopNotification";
+import DataTable from "./DataTable";
 
 export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
   const dropContainer = useRef(null);
@@ -14,6 +15,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
   const fileRef = useRef(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [output, setOutput] = useState(null);
+  const [processedData, setProcessedData] = useState(null);
 
   async function handleDrop(e, type) {
     let files;
@@ -94,7 +96,8 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
           );
 
           console.log("File uploaded successfully:", response.data);
-          setOutput(response.data);
+          setOutput(response.data.data_types);
+          setProcessedData(response.data.processed_data);
           setUploadProgress(100);
           clearInterval(progressInterval);
           return {
@@ -190,7 +193,8 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
           {data.map((file, index) => (
             <FileDisplay file={file} index={index} onDelete={onDelete} />
           ))}
-          {output && <OutputTable output={output} />}
+          {/* {output && <OutputTable output={output} />} */}
+          {processedData && <DataTable processedData={processedData} />}
         </div>
       )}
     </>
