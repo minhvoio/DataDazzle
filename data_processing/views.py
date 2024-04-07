@@ -39,10 +39,10 @@ class FileUploadView(APIView):
         # Remove the temporary file
         os.remove(temp_file_path)
 
-        print("\nData types after inference:")
-        print(df)
+        # print("\nData types after inference:")
+        # print(df)
         # print(df.dtypes)
-        print(user_friendly_data_types)
+        # print(user_friendly_data_types)
 
         # Convert the DataFrame to a JSON-compatible format
         df_json = json.loads(df.to_json(orient='records'))

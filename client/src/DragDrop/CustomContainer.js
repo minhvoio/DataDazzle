@@ -8,6 +8,7 @@ import { FileDisplay } from "./FileDisplay";
 import { showAlert } from "../utils/showAlert";
 import { TopNotification } from "./TopNotification";
 import DataTable from "./DataTable";
+import logo from "../assets/data_dazzle_logo.svg";
 
 export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
   const dropContainer = useRef(null);
@@ -147,56 +148,68 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
 
   return (
     <>
-      {/* Container Drop */}
-      <div
-        className={`${
-          dragging
-            ? "border border-primary bg-slate-100"
-            : "border-dashed border-slate-300"
-        } flex items-center justify-center mx-auto text-center border-2 rounded-md mt-4 py-5`}
-        ref={dropContainer}
-      >
-        <div className="flex-1 flex flex-col">
-          <div className="mx-auto text-gray-400 mb-2">
-            <FaUpload size={18} />
-          </div>
-          <div className="text-[12px] font-normal text-gray-500">
-            <input
-              className="opacity-0 hidden"
-              type="file"
-              multiple
-              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/csv"
-              ref={fileRef}
-              onChange={(e) => handleDrop(e, "inputFile")}
-            />
-            <span
-              className="text-primary cursor-pointer font-bold"
-              onClick={() => {
-                fileRef.current.click();
-              }}
+      <div className="bg-slate-100 h-screen py-16 overflow-auto">
+        <div className="flex justify-center items-center px-5">
+          <div className="bg-white shadow-lg rounded-lg w-2/5 px-5 py-5">
+            <div className="pb-[8px] border-b border-[#e0e0e0] flex justify-center">
+              <img src={logo} alt="logo" className="h-8" />
+            </div>
+            {/* Container Drop */}
+            <div
+              className={`${
+                dragging
+                  ? "border border-primary bg-slate-100"
+                  : "border-dashed border-slate-300"
+              } flex items-center justify-center mx-auto text-center border-2 rounded-md mt-4 py-5`}
+              ref={dropContainer}
             >
-              Click to upload
-            </span>{" "}
-            or drag and drop
-          </div>
-          <div className="text-[10px] font-normal text-gray-500">
-            Only files XLSX, XLS, CSV
+              <div className="flex-1 flex flex-col">
+                <div className="mx-auto text-gray-400 mb-2">
+                  <FaUpload size={18} />
+                </div>
+                <div className="text-[12px] font-normal text-gray-500">
+                  <input
+                    className="opacity-0 hidden"
+                    type="file"
+                    multiple
+                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/csv"
+                    ref={fileRef}
+                    onChange={(e) => handleDrop(e, "inputFile")}
+                  />
+                  <span
+                    className="text-primary cursor-pointer font-bold"
+                    onClick={() => {
+                      fileRef.current.click();
+                    }}
+                  >
+                    Click to upload
+                  </span>{" "}
+                  or drag and drop
+                </div>
+                <div className="text-[10px] font-normal text-gray-500">
+                  Only files XLSX, XLS, CSV
+                </div>
+              </div>
+            </div>
+            {uploadProgress > 0 && uploadProgress !== 100 && (
+              <ProgressBar uploadProgress={uploadProgress} />
+            )}
+
+            {data.length > 0 && (
+              <div className="mt-4 flex-col space-y-3">
+                {data.map((file, index) => (
+                  <FileDisplay file={file} index={index} onDelete={onDelete} />
+                ))}
+                {/* {output && <OutputTable output={output} />} */}
+              </div>
+            )}
           </div>
         </div>
-      </div>
-      {uploadProgress > 0 && uploadProgress !== 100 && (
-        <ProgressBar uploadProgress={uploadProgress} />
-      )}
 
-      {data.length > 0 && (
-        <div className="mt-4 flex-col space-y-3">
-          {data.map((file, index) => (
-            <FileDisplay file={file} index={index} onDelete={onDelete} />
-          ))}
-          {/* {output && <OutputTable output={output} />} */}
+        <div className="bg-white shadow-lg rounded-lg px-5 py-5 mt-16 w-2/3 mx-auto">
           {processedData && <DataTable processedData={processedData} />}
         </div>
-      )}
+      </div>
     </>
   );
 }
