@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import moment from "moment";
+import { topNotification } from "../utils/topNotification";
+import { FaCopy, FaDownload } from "react-icons/fa";
 
-const DataTable = ({ processedData, dataTypes }) => {
+const DataTable = ({ processedData, dataTypes, fileName }) => {
   // State to store the selected data types
   const [selectedDataTypes, setSelectedDataTypes] = useState(dataTypes);
 
@@ -40,21 +42,89 @@ const DataTable = ({ processedData, dataTypes }) => {
     }));
   };
 
+  const handleCopyToClipboard = () => {
+    const headerRow = columns.join("\t");
+    const dataTypeRow = columns
+      .map((column) => selectedDataTypes[column])
+      .join("\t");
+    const clipboardContent = `${dataTypeRow}\n${headerRow}`;
+
+    navigator.clipboard
+      .writeText(clipboardContent)
+      .then(() => {
+        topNotification.fire({
+          icon: "success",
+          title: "Copied to clipboard",
+        });
+      })
+      .catch((error) => {
+        console.error("Failed to copy to clipboard:", error);
+        topNotification.fire({
+          icon: "error",
+          title: "Failed to copy to clipboard",
+        });
+      });
+  };
+
+  const handleDownloadCSV = () => {
+    const dataTypeRow = Object.values(selectedDataTypes).join(",");
+    const headerRow = columns.join(",");
+    const dataRows = processedData.map((row) =>
+      columns
+        .map((column) => {
+          const cellValue = row[column];
+          if (
+            selectedDataTypes[column] === "datetime64" ||
+            selectedDataTypes[column] === "Date"
+          ) {
+            return moment(cellValue).isValid()
+              ? moment(cellValue).format("YYYY-MM-DD")
+              : cellValue;
+          }
+          return cellValue;
+        })
+        .join(",")
+    );
+
+    const csvContent = `${dataTypeRow}\n${headerRow}\n${dataRows.join("\n")}`;
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", fileName);
+
+    topNotification.fire({
+      icon: "success",
+      title: "CSV file downloaded",
+    });
+
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="overflow-x-auto">
+      <div className="flex justify-center mt-4">
+        <button
+          className="flex items-center px-4 py-2 mb-4 font-bold text-white bg-primary rounded hover:bg-primary_dark"
+          onClick={handleCopyToClipboard}
+        >
+          <FaCopy className="mr-2" />
+          Copy Header and Types
+        </button>
+        <button
+          className="flex items-center px-4 py-2 ml-4 mb-4 font-bold text-white bg-green-500 rounded hover:bg-green-700"
+          onClick={handleDownloadCSV}
+        >
+          <FaDownload className="mr-2" />
+          Download CSV
+        </button>
+      </div>
       <table className="table-auto w-full">
         <thead>
-          <tr className="bg-slate-200">
-            {columns.map((column, index) => (
-              <th
-                key={index}
-                className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                {column}
-              </th>
-            ))}
-          </tr>
-          <tr className="bg-slate-100">
+          <tr className="bg-slate-300">
             {columns.map((column, index) => (
               <th key={index} className="px-4 py-2 text-left">
                 <select
@@ -68,6 +138,16 @@ const DataTable = ({ processedData, dataTypes }) => {
                     </option>
                   ))}
                 </select>
+              </th>
+            ))}
+          </tr>
+          <tr className="bg-slate-200">
+            {columns.map((column, index) => (
+              <th
+                key={index}
+                className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                {column}
               </th>
             ))}
           </tr>

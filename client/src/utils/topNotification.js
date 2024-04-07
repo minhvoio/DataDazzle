@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 
-export const TopNotification = Swal.mixin({
+export const topNotification = Swal.mixin({
   toast: true,
   position: "bottom-end",
   showConfirmButton: false,

@@ -5,7 +5,7 @@ import { FaUpload } from "react-icons/fa";
 import { ProgressBar } from "./ProgressBar";
 import { FileDisplay } from "./FileDisplay";
 import { showAlert } from "../utils/showAlert";
-import { TopNotification } from "./TopNotification";
+import { topNotification } from "../utils/topNotification";
 import DataTable from "./DataTable";
 import logo from "../assets/data_dazzle_logo.svg";
 
@@ -111,7 +111,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
 
       Promise.all(nFiles).then((newFiles) => {
         onUpload(newFiles);
-        TopNotification.fire({
+        topNotification.fire({
           icon: "success",
           title: "File(s) uploaded",
         });
@@ -150,7 +150,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
       <div className="bg-slate-50 h-screen py-16 overflow-auto">
         <div className="flex justify-center items-center px-5">
           <div className="bg-white shadow-lg rounded-lg w-2/3 px-5 py-5">
-            <div className="pb-4 border-b border-[#e0e0e0] flex justify-center">
+            <div className="pb-4 border-b border-slate-300 flex justify-center">
               <img src={logo} alt="logo" className="h-10" />
             </div>
             {/* Container Drop */}
@@ -183,7 +183,7 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
                   >
                     Click to upload
                   </span>{" "}
-                  or drag and drop
+                  or drag and drop to clean and infer data types
                 </div>
                 <div className="text-[10px] font-normal text-gray-500">
                   Only files XLSX, XLS, CSV
@@ -198,20 +198,23 @@ export function CustomDragDrop({ data, onUpload, onDelete, count, formats }) {
               <>
                 <div className="mt-4 flex-col space-y-3">
                   {data.map((file, index) => (
-                    <FileDisplay
-                      file={file}
-                      index={index}
-                      onDelete={onDelete}
-                    />
+                    <>
+                      <FileDisplay
+                        file={file}
+                        index={index}
+                        onDelete={onDelete}
+                      />
+                      <div className="mt-5">
+                        {processedData && (
+                          <DataTable
+                            processedData={processedData}
+                            dataTypes={dataTypes}
+                            fileName={file.name}
+                          />
+                        )}
+                      </div>
+                    </>
                   ))}
-                </div>
-                <div className="mt-5">
-                  {processedData && (
-                    <DataTable
-                      processedData={processedData}
-                      dataTypes={dataTypes}
-                    />
-                  )}
                 </div>
               </>
             )}
